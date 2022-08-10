@@ -9,11 +9,16 @@ contract lottery{
     uint private balance;
     uint64 private reward;
     address private winner;
+    // address private winnerpubkey;
 
     constructor(uint _secretNumber) payable {
-        require(address(this).balance >= 5, "This contract needs to be funded.");
+        // require(address(this).balance >= 5, "This contract needs to be funded.");
         secretNumber = _secretNumber;
         // balance = msg.value; 
+    }
+
+    function send( address receiver, uint64 fund) external payable {
+    require(payable(receiver).send(fund), "Transaction failed");   
     }
 
     function setReward(uint64 _rewardValue) public {
@@ -34,7 +39,7 @@ contract lottery{
         return address(this);
     }
 
-    function play(address payable player, uint _numberGuess) external payable returns(uint){
+    function play(address payable player, uint _numberGuess) external payable {
         // require(msg.value >= 1, "To play you need to pay at least 1.");
         require(currState == State.ACTIVE, "Too late :X.");
         // balance = balance+msg.value;
@@ -43,11 +48,14 @@ contract lottery{
             // bool complete = player.transfer(reward);
             // player.transfer(reward);
             // player.transfer(reward);
+            
 
             winner = player;
+            // winnerpubkey= pubkey;
+            // send(winner, reward);
             currState = State.COMPLETE;
         }
-        return balance;
+        // return balance;
     }
 
     // function refreshContract(uint _secretNumber) external payable {
@@ -64,4 +72,7 @@ contract lottery{
     function getWinner() public view virtual returns (address) {
         return winner;
     }
+    // function getWinnerPubKey() public view virtual returns (address) {
+    //     return winnerpubkey;
+    // }
 }
